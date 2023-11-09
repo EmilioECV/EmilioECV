@@ -1,0 +1,80 @@
+def Pick_and_place():   #Realizado Emilio Ernesto Castillo Velázquez
+  # Global parameters:
+  global speed_ms    = 0.250
+  global speed_rads  = 0.750
+  global accel_mss   = 1.200
+  global accel_radss = 1.200
+  global blend_radius_m = 0.000
+  
+  #--------------------------
+  # Inicializacion del gripper:
+	rq_activate()  #inicializar la pinza 
+	sleep(5)
+	rq_close() #cerrar la pinza 
+	sleep(2)
+	rq_open() #abrir la pinza
+	sleep(2)
+  #--------------------------
+  # Main program:
+  # Using nominal kinematics.
+  # Using Ref. Frame 3: p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000]
+  # set_reference(p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000])
+  # Using TCP Tool 1(Hand-E): p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000]
+
+  set_tcp(p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000])
+
+  #Tipo de movimiento/ coordenadas del punto de control
+
+	movej(p[.254031883872, .220782002377, .161056505074, -1.759929326292,2.540551407221, -.025912997055],accel_mss,speed_ms,0,0.000) #punto de paso 1
+	movej(p[.366652234945, -.125698749916, .159985883651, -1.030204047932,2.946738852486, -.092611993291],accel_mss,speed_ms,0,0.000) #punto de paso 2
+	movel(p[.366667806042, -.125702076296, .066604705245, -1.030169773665,2.946717455612, -.092649337154],accel_mss,speed_ms,0,0.000) #punto de paso 3
+
+	#(posicion, "parametros que no se que signifiquen, podrian ser, aceleracion, fuerza, desconocido")
+	
+	#puerba de parametros (posicion de la pinza, velocidad, fuerza)  
+	rq_set_pos_spd_for(114.75, 26, 3) #asignar nueva posicion a la pizna (apertura/cierre [0-225])
+	sleep(5)	
+
+	#rq_pos=114.75	#acepta decimales 
+	#rq_speed=25.5
+	#rq_force=2.55
+ 	movel(p[.366663014512, -.125692320599, .159991647409, -1.030201781898,2.946685842285, -.092602189986] ,accel_mss,speed_ms,0,0.000) #punto de paso 4
+	movej(p[-.1907296774303562, -.2537479009823402, .14614691485656597, -2.244343746985, -2.176856222456, -.060558386826],accel_mss,speed_ms,0,0.000) #punto de paso 5		
+	movel(p[-.1907039193431182, -.2537408365489116, .09213050489522459, -2.244314412860, -2.176952941166, -.060513365858],accel_mss,speed_ms,0,0.000) #punto de paso 6
+
+	rq_set_pos_spd_for(2.55, 26, 3)	
+	sleep(5)
+
+	#rq_pos=2.55
+	#rq_speed=25.5
+	#rq_force=2.55
+
+	movel(p[-.184708787716, -.265076240390, .153338691396, -2.244288791777, -2.177009155976, -.060483213441],accel_mss,speed_ms,0,0.000) #punto de paso 7
+	movej(p[-.198857747694, -.334825850758, .483911159198,1.759990962604,1.714638349670, -.962728217881],accel_mss,speed_ms,0,0.000) #punto de paso 8
+	movej(p[-.184708787716, -.265076240390, .153338691396, -2.244288791777, -2.177009155976, -.060483213441],accel_mss,speed_ms,0,0.000) #punto de paso 7
+	movel(p[-.1907039193431182, -.2537408365489116, .09213050489522459, -2.244314412860, -2.176952941166, -.060513365858],accel_mss,speed_ms,0,0.000) #punto de paso 6
+
+	rq_set_pos_spd_for(114.75, 26, 3)
+	sleep(5)
+
+	#rq_pos=114.75
+	#rq_speed=25.5
+	#rq_force=2.55
+	
+	movel(p[-.184708787716, -.265076240390, .153338691396, -2.244288791777, -2.177009155976, -.060483213441],accel_mss,speed_ms,0,0.000) #punto de paso 7
+	movej(p[.366663014512, -.125692320599, .159991647409, -1.030201781898,2.946685842285, -.092602189986] ,accel_mss,speed_ms,0,0.000) #punto de paso 4
+	movej(p[.366667806042, -.125702076296, .066604705245, -1.030169773665,2.946717455612, -.092649337154],accel_mss,speed_ms,0,0.000) #punto de paso 3
+	
+	rq_set_pos_spd_for(2.55, 26, 3)
+	sleep(5)
+
+	#rq_pos=2.55
+	#rq_speed=25.5
+	#rq_force=2.55
+
+	movej(p[.366663014512, -.125692320599, .159991647409, -1.030201781898,2.946685842285, -.092602189986] ,accel_mss,speed_ms,0,0.000) #punto de paso 4	
+	movej(p[.254031883872, .220782002377, .161056505074, -1.759929326292,2.540551407221, -.025912997055],accel_mss,speed_ms,0,0.000) #punto de paso 1
+ # End of main program
+end
+
+Pick_and_place()

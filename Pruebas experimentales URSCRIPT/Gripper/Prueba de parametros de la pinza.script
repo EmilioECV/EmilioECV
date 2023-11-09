@@ -1,0 +1,39 @@
+def Gripper():   #Realizado Emilio Ernesto Castillo Velázquez
+  # Global parameters:
+  global speed_ms    = 0.250
+  global speed_rads  = 0.750
+  global accel_mss   = 1.200
+  global accel_radss = 1.200
+  global blend_radius_m = 0.000
+  
+  #--------------------------
+  # Inicializacion del gripper:
+	rq_activate()  #inicializar la pinza 
+	sleep(5)
+	rq_close() #cerrar la pinza 
+	sleep(2)
+	rq_open() #abrir la pinza
+	sleep(2)
+  #--------------------------
+  # Main program:
+  # Using nominal kinematics.
+  # Using Ref. Frame 3: p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000]
+  # set_reference(p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000])
+  # Using TCP Tool 1(Hand-E): p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000]
+
+  set_tcp(p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000])
+
+  #Tipo de movimiento/ coordenadas del punto de control
+
+									      (apertura/cierre [0-225])
+	#puerba de parametros (posicion de la pinza, velocidad, fuerza)   	 [(0=0%)-(255=100%)]
+  	rq_set_pos_spd_for(255, 100, 2.5) #cierra la pinza completamente (100%), velocidad maxima (100%),fuerza del 1%
+	sleep(5)
+	rq_set_pos_spd_for(0, 0, 2.5) #abre la pinza completamente (0%), velocidad minima (0%),fuerza del 1%
+	sleep(5)
+	rq_set_pos_spd_for(127.5, 100, 2.5)  #pinza a la mitad (50%), velocidad maxima (100%),fuerza del 1%
+	sleep(5)	
+
+end
+
+Gripper()

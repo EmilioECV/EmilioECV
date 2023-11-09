@@ -1,0 +1,119 @@
+def Pick_and_Place_Mapeando_Fuerza(): #Realizado Emilio Ernesto Castillo Velázquez
+  # Global parameters:
+  global speed_ms    = 0.250
+  global speed_rads  = 0.750
+  global accel_mss   = 1.200
+  global accel_radss = 1.200
+  global blend_radius_m = 0.000
+  
+  #--------------------------
+  # Inicializacion del gripper:
+	rq_activate()  #inicializar la pinza 
+	sleep(2)
+	rq_close() #cerrar la pinza 
+	sleep(2)
+	rq_open() #abrir la pinza
+	sleep(2)
+  #--------------------------
+  # Main program:
+  # Using nominal kinematics.
+  # Using Ref. Frame 3: p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000]
+  # set_reference(p[0.000000, 0.500000, 0.000000, 0.000000, 0.000000, 0.000000])
+  # Using TCP Tool 1(Hand-E): p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000]
+
+  set_tcp(p[0.000000, 0.000000, 0.150000, 0.000000, 0.000000, 0.000000])
+  movel(p[.379183266009, -.124694369181, .162859056369, -1.104457129483, 2.908240072798, -.081279119160],accel_mss,speed_ms,0,0.000) #llega a la posicion inicial
+
+############### SUBTAREA_1 PARA DETECTAR FUERZA EN Z Y CERRAR PINZA  #########################
+
+  thread SubTarea_1(): #SubTarea 1
+    while (True):
+      global FuerzaTotal= force()   #MapeoFuerza
+      global FuerzaTCP= get_tcp_force()
+      global FuerzaenZ=FuerzaTCP[2]
+      sync()
+    end
+  end
+	threadId_SubTarea_1 = run SubTarea_1()
+  sleep(0.02)
+  zero_ftsensor()
+  force_mode(tool_pose(), [0, 0, 1, 0, 0, 0], [0.0, 0.0, 2.0, 0.0, 0.0, 0.0], 2, [0.1, 0.1, 0.15, 0.3490658503988659, 0.3490658503988659, 0.3490658503988659])
+ 
+  while (not(FuerzaenZ>2)):  #Esperar Fuerza en Z>2 
+    sync()
+  end
+ 
+  popup(str_cat("",FuerzaenZ), "Mensaje", False, False, blocking=True)  ## "Aviso" "noBreak"
+    
+  rq_set_pos_spd_for(255, 255, 127.5) #Se cierra la pinza una vez que detecte la fuerza
+  end_force_mode()
+  stopl(5.0)
+
+##-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+movel(p[-.193738115874, -.255790269340, .202211564727, 2.209958898397, 2.201389670818, .000311336749],accel_mss,speed_ms,0,0.000) #Se mueve a segunda posicion con el bloque 
+############### SUBTAREA_2 PARA DETECTAR FUERZA EN Z Y ABRIR PINZA  #########################
+
+ thread SubTarea_2(): #SubTarea 2
+    while (True):
+      global FuerzaTotal= force()   #MapeoFuerza
+      global FuerzaTCP= get_tcp_force()
+      global FuerzaenZ=FuerzaTCP[2]
+      sync()
+    end
+  end
+	threadId_SubTarea_2 = run SubTarea_2()
+  sleep(0.02)
+  zero_ftsensor()
+  force_mode(tool_pose(), [0, 0, 1, 0, 0, 0], [0.0, 0.0, 2.0, 0.0, 0.0, 0.0], 2, [0.1, 0.1, 0.15, 0.3490658503988659, 0.3490658503988659, 0.3490658503988659])
+ 
+  while (not(FuerzaenZ>2)):  #Esperar Fuerza en Z>2 
+    sync()
+  end
+ 
+  popup(str_cat("",FuerzaenZ), "Mensaje", False, False, blocking=True)  ## "Aviso" "noBreak"
+    
+  rq_set_pos_spd_for(50,255,127.5) #Se abre la pinza una vez que detecte la fuerza
+
+  end_force_mode()
+  stopl(5.0)
+##----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+movel(p[-.193738115874, -.255790269340, .202211564727, 2.209958898397, 2.201389670818, .000311336749],accel_mss,speed_ms,0,0.000) #en segunda posicion se desplaza en z+ respecto a la base
+##----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	run SubTarea_1() #buscar fuerza en z para cerrar la pinza con el bloque 
+	sleep(0.02)
+ 	zero_ftsensor()
+ 	force_mode(tool_pose(), [0, 0, 1, 0, 0, 0], [0.0, 0.0, 2.0, 0.0, 0.0, 0.0], 2, [0.1, 0.1, 0.15, 0.3490658503988659, 0.3490658503988659, 0.3490658503988659])
+ 
+ 	while (not(FuerzaenZ>2)):  #Esperar Fuerza en Z>2 
+   	sync()
+  	end
+ 
+  	popup(str_cat("",FuerzaenZ), "Mensaje", False, False, blocking=True)  ## "Aviso" "noBreak"
+    
+  	rq_set_pos_spd_for(255, 255, 127.5) #Se cierra la pinza una vez que detecte la fuerza
+  	end_force_mode()
+  	stopl(5.0)
+##----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	movel(p[-.193738115874, -.255790269340, .202211564727, 2.209958898397, 2.201389670818, .000311336749],accel_mss,speed_ms,0,0.000) #levanta en z+
+	movel(p[.379183266009, -.124694369181, .162859056369, -1.104457129483, 2.908240072798, -.081279119160],accel_mss,speed_ms,0,0.000) #regresa al primer punto 
+##----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	run SubTarea_2() #busca fuerza en z para abrir la pinza y dejar el bloque 
+	 sleep(0.02)
+ 	 zero_ftsensor()
+  	force_mode(tool_pose(), [0, 0, 1, 0, 0, 0], [0.0, 0.0, 2.0, 0.0, 0.0, 0.0], 2, [0.1, 0.1, 0.15, 0.3490658503988659, 0.3490658503988659, 0.3490658503988659])
+ 
+  	while (not(FuerzaenZ>2)):  #Esperar Fuerza en Z>2 
+    	sync()
+ 	 end
+ 
+ 	 popup(str_cat("",FuerzaenZ), "Mensaje", False, False, blocking=True)  ## "Aviso" "noBreak"
+    
+ 	 rq_set_pos_spd_for(2.5,255,127.5) #Se abre la pinza una vez que detecte la fuerza
+
+  	end_force_mode()
+ 	 stopl(5.0)
+sleep(10)	
+end
+
+Pick_and_Place_Mapeando_Fuerza()
